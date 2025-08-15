@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"@rsbuild/core": "^1.4.15"
+	}
+}

@@ -1,0 +1,25 @@
+{
+  "name": "lynx-heic-runtime-decode",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "rspeedy build"
+  },
+  "dependencies": {
+    "@rsbuild/plugin-node-polyfill": "^1.4.1",
+    "libheif-js": "^1.19.8"
+  },
+  "devDependencies": {
+    "@lynx-js/lynx-core": "^0.1.3",
+    "@lynx-js/react": "^0.112.2",
+    "@lynx-js/react-rsbuild-plugin": "^0.10.11",
+    "@lynx-js/rspeedy": "^0.10.6",
+    "@lynx-js/web-core": "^0.15.5",
+    "@lynx-js/web-elements": "^0.8.4",
+    "@rsbuild/core": "^1.4.15",
+    "@types/react": "^18.3.3",
+    "typescript": "^5.5.2"
+  },
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
+}
