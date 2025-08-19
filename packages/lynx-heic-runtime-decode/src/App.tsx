@@ -1,3 +1,5 @@
+import { useMainThreadRef, useState, useEffect, runOnMainThread } from '@lynx-js/react';
+import type { MainThread } from '@lynx-js/types';
 import './App.css';
 // @ts-expect-error
 import Image1Heic from '../images/1.heic';
@@ -15,23 +17,44 @@ import Image6Heic from '../images/6.heic';
 import Image7Heic from '../images/7.heic';
 // @ts-expect-error
 import Image8Heic from '../images/8.heic';
+// @ts-expect-error
 import libheif from 'libheif-js';
-import { runOnMainThread, useMainThreadRef, useState, useEffect } from '@lynx-js/react';
+import type { JSX } from 'react';
 
 
 const imageCount = 8;
 
-const App = () => {
+const App = (): JSX.Element => {
   const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(Array(imageCount).fill(null));
   const [bgColor] = useState('#ffffff');
-  const scrollContainerRef = useMainThreadRef(null);
+  const scrollContainerRef = useMainThreadRef<MainThread.Element>(null);
   const currentScrollY = useMainThreadRef(0);
   const prevTime = useMainThreadRef(0);
+  function animator(time: number) {
+    'main thread';
+    if (prevTime.current === 0) {
+      prevTime.current = time;
+      requestAnimationFrame(animator);
+    }
+    else {
+      const deltaTime = time - prevTime.current;
+      prevTime.current = time;
+      if (scrollContainerRef.current) {
+        if (currentScrollY.current > -500) {
+          currentScrollY.current -= deltaTime * 0.05;
+          scrollContainerRef.current.setStyleProperties({
+            transform: `translateY(${currentScrollY.current}px)`
+          })
+          requestAnimationFrame(animator);
+        }
+      }
+    }
+  }
 
-  useEffect(()=>{
-      runOnMainThread(trigger)();
+  useEffect(() => {
+    runOnMainThread(animator)(0);
+  }, []);
 
-  });
   useEffect(() => {
     const decodeImages = async () => {
       const imageUrls = [
@@ -76,31 +99,6 @@ const App = () => {
       });
     }
   }, []);
-
-  const animatorRef = useMainThreadRef(null);
-  const trigger = () => {
-    'main thread';
-    animatorRef.current = (time) => {
-    'main thread';
-      if (prevTime.current === 0) {
-        prevTime.current = time;
-      }
-      else {
-        const deltaTime = time - prevTime.current;
-        prevTime.current = time;
-        if (scrollContainerRef.current) {
-          if (currentScrollY.current > -500) {
-            currentScrollY.current -= deltaTime * 0.05;
-            scrollContainerRef.current.setStyleProperties({
-              transform: `translateY(${currentScrollY.current}px)`
-            })
-            lynx.requestAnimationFrame(animatorRef.current);
-          }
-        }
-      }
-  };
-    lynx.requestAnimationFrame(animatorRef.current);
-  }
 
   return (
     <view className="App" style={{ backgroundColor: bgColor }}>

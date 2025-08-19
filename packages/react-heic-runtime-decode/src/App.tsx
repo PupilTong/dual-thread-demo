@@ -16,18 +16,40 @@ import Image6Heic from '../images/6.heic';
 import Image7Heic from '../images/7.heic';
 // @ts-expect-error
 import Image8Heic from '../images/8.heic';
+// @ts-expect-error
 import libheif from 'libheif-js';
 
 
 const imageCount = 8;
 
-const App = () => {
+const App: React.FC = () => {
   const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(Array(imageCount).fill(null));
-  const [bgColor, setBgColor] = useState('#ffffff');
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [bgColor] = useState('#ffffff');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const currentScrollY = useRef(0);
   const prevTime = useRef(0);
+
+  function animator(time: number) {
+    if (prevTime.current === 0) {
+      prevTime.current = time;
+      requestAnimationFrame(animator);
+    }
+    else {
+      const deltaTime = time - prevTime.current;
+      prevTime.current = time;
+      if (scrollContainerRef.current) {
+        if (currentScrollY.current > -500) {
+          currentScrollY.current -= deltaTime * 0.05;
+          scrollContainerRef.current.style.transform = `translateY(${currentScrollY.current}px)`;
+          requestAnimationFrame(animator);
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    requestAnimationFrame(animator);
+  }, []);
 
   useEffect(() => {
     const decodeImages = async () => {
@@ -41,16 +63,16 @@ const App = () => {
         Image7Heic,
         Image8Heic,
       ];
-      for(let index =0; index < imageUrls.length; index++) {
+      for (let index = 0; index < imageUrls.length; index++) {
         const url = imageUrls[index];
         const decoder = new libheif.HeifDecoder();
-        const buffer = await fetch(url).then((response)=>response.arrayBuffer());
+        const buffer = await fetch(url).then((response) => response.arrayBuffer());
         const [image] = decoder.decode(buffer);
         const width = image.get_width();
         const height = image.get_height();
-        const data = new Uint8ClampedArray(width*height*4,);
-        const {promise, resolve} = Promise.withResolvers();
-        image.display({data, width, height}, async () => {
+        const data = new Uint8ClampedArray(width * height * 4,);
+        const { promise, resolve } = Promise.withResolvers();
+        image.display({ data, width, height }, async () => {
           const newImage = new ImageData(data, width, height);
           const offscreenCanvas = new OffscreenCanvas(width, height);
           const ctx = offscreenCanvas.getContext('2d');
@@ -74,51 +96,6 @@ const App = () => {
     }
   }, []);
 
-  const animator = (time) => {
-      if (prevTime.current === 0) {
-        prevTime.current = time;
-      }
-      else {
-        const deltaTime = time - prevTime.current;
-        prevTime.current = time;
-        if (scrollContainerRef.current) {
-          if (currentScrollY.current > -500) {
-            currentScrollY.current -= deltaTime * 0.05;
-            scrollContainerRef.current.style.transform = `translateY(${currentScrollY.current}px)`;
-            requestAnimationFrame((time) => {
-              animator(time);
-            });
-          }
-        }
-      }
-    }
-  useEffect(()=>{
-    requestAnimationFrame(animator);
-  })
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (sliderRef.current) {
-      const rect = sliderRef.current.getBoundingClientRect();
-      let newX = e.clientX - rect.left;
-      if (newX < 0) newX = 0;
-      if (newX > rect.width) newX = rect.width;
-      const percentage = newX / rect.width;
-      const hue = Math.round(percentage * 360);
-      setBgColor(`hsl(${hue}, 100%, 50%)`);
-    }
-  };
-
-  const handleMouseUp = () => {
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
   return (
     <div className="App" style={{ backgroundColor: bgColor }}>
       <div className="image-grid" ref={scrollContainerRef}>
@@ -131,9 +108,6 @@ const App = () => {
             )}
           </div>
         ))}
-      </div>
-      <div className="slider-container" ref={sliderRef} onMouseDown={handleMouseDown}>
-        <div className="slider-thumb" style={{ left: `calc(${Math.round((parseInt(bgColor.slice(4, 7)) / 360) * 100)}% - 10px)` }}></div>
       </div>
     </div>
   );

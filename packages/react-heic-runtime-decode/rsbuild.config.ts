@@ -7,6 +7,9 @@ export default defineConfig({
   //load *.heic files as resources
   source:{
     assetsInclude: [/\.heic$/],
+    entry: {
+      main: './src/index.tsx'
+    }
   },
   server:{
     port:3001,
