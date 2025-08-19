@@ -1,21 +1,20 @@
 import { defineConfig } from '@rsbuild/core';
 
 export default defineConfig({
-
   source: {
     entry: {
-      main: './shell/index.ts'
+      main: './shell/index.ts',
     },
   },
-  output:{
+  output: {
     distPath: {
-      root: './www'
+      root: './www',
     },
   },
-  server:{
+  server: {
     publicDir: [{
       name: './dist',
       copyOnBuild: true,
-    }]
-  }
+    }],
+  },
 });

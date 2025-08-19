@@ -1,0 +1,71 @@
+{
+  "typescript": {
+    "lineWidth": 80,
+    "semiColons": "prefer",
+    "quoteStyle": "alwaysSingle",
+
+    "module.sortImportDeclarations": "maintain",
+    "module.sortExportDeclarations": "maintain",
+    "exportDeclaration.sortNamedExports": "maintain",
+    "importDeclaration.sortNamedImports": "maintain",
+  },
+  "json": {
+    "jsonTrailingCommaFiles": [
+      ".vscode/extensions.json",
+      ".vscode/settings.json",
+      "tsconfig.json",
+      "tsconfig.build.json",
+      "api-extractor.json",
+    ],
+  },
+  "markdown": {
+  },
+  "toml": {
+  },
+  "malva": {
+  },
+  "markup": {
+  },
+  "yaml": {
+  },
+  "excludes": [
+    // Dependencies
+    "**/node_modules",
+    "**/*-lock.json",
+    "pnpm-lock.yaml",
+
+    // Outputs
+    "**/lib/**",
+    "**/dist/**",
+    "**/web-tests/output/**",
+    "**/etc/*.md",
+    "website/docs/en/api/**",
+    "website/docs/zh/api/**",
+    "website/docs/en/changelog/**",
+    "website/docs/zh/changelog/**",
+    "packages/web-platform/web-explorer/preinstalled/**",
+
+    // The tsconfig.json contains comments that align with indents.
+    "/tsconfig.json",
+
+    // Tests depend on format
+    "packages/tools/css-serializer/test/__preparation__/**",
+    "packages/webpack/css-extract-webpack-plugin/test/js/**",
+    "packages/webpack/css-extract-webpack-plugin/test/rspack-js/**",
+    "packages/**/test/**/diagnostic/**",
+    "**/expected/**",
+    "**/rspack-expected/**",
+    "packages/**/test/**/hotCases/**",
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/dockerfile-0.3.2.wasm",
+    "https://plugins.dprint.dev/exec-0.5.1.json@492414e39dea4dccc07b4af796d2f4efdb89e84bae2bd4e1e924c0cc050855bf",
+    "https://plugins.dprint.dev/typescript-0.95.0.wasm",
+    "https://plugins.dprint.dev/json-0.20.0.wasm",
+    "https://plugins.dprint.dev/markdown-0.18.0.wasm",
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.12.0.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.20.0.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm",
+  ],
+}

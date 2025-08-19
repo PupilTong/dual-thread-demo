@@ -1,4 +1,9 @@
-import { useMainThreadRef, useState, useEffect, runOnMainThread } from '@lynx-js/react';
+import {
+  useMainThreadRef,
+  useState,
+  useEffect,
+  runOnMainThread,
+} from '@lynx-js/react';
 import type { MainThread } from '@lynx-js/types';
 import './App.css';
 // @ts-expect-error
@@ -21,11 +26,12 @@ import Image8Heic from '../images/8.heic';
 import libheif from 'libheif-js';
 import type { JSX } from 'react';
 
-
 const imageCount = 8;
 
 const App = (): JSX.Element => {
-  const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(Array(imageCount).fill(null));
+  const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(
+    Array(imageCount).fill(null),
+  );
   const [bgColor] = useState('#ffffff');
   const scrollContainerRef = useMainThreadRef<MainThread.Element>(null);
   const currentScrollY = useMainThreadRef(0);
@@ -35,16 +41,15 @@ const App = (): JSX.Element => {
     if (prevTime.current === 0) {
       prevTime.current = time;
       requestAnimationFrame(animator);
-    }
-    else {
+    } else {
       const deltaTime = time - prevTime.current;
       prevTime.current = time;
       if (scrollContainerRef.current) {
         if (currentScrollY.current > -500) {
           currentScrollY.current -= deltaTime * 0.05;
           scrollContainerRef.current.setStyleProperties({
-            transform: `translateY(${currentScrollY.current}px)`
-          })
+            transform: `translateY(${currentScrollY.current}px)`,
+          });
           requestAnimationFrame(animator);
         }
       }
@@ -67,16 +72,18 @@ const App = (): JSX.Element => {
         Image7Heic,
         Image8Heic,
       ];
-      for(let index =0; index < imageUrls.length; index++) {
+      for (let index = 0; index < imageUrls.length; index++) {
         const url = imageUrls[index];
         const decoder = new libheif.HeifDecoder();
-        const buffer = await fetch(url).then((response)=>response.arrayBuffer());
+        const buffer = await fetch(url).then((response) =>
+          response.arrayBuffer()
+        );
         const [image] = decoder.decode(buffer);
         const width = image.get_width();
         const height = image.get_height();
-        const data = new Uint8ClampedArray(width*height*4,);
-        const {promise, resolve} = Promise.withResolvers();
-        image.display({data, width, height}, async () => {
+        const data = new Uint8ClampedArray(width * height * 4);
+        const { promise, resolve } = Promise.withResolvers();
+        image.display({ data, width, height }, async () => {
           const newImage = new ImageData(data, width, height);
           const offscreenCanvas = new OffscreenCanvas(width, height);
           const ctx = offscreenCanvas.getContext('2d');
@@ -97,19 +104,17 @@ const App = (): JSX.Element => {
       imageSrcs.forEach((src) => {
         src && URL.revokeObjectURL(src as string);
       });
-    }
+    };
   }, []);
 
   return (
-    <view className="App" style={{ backgroundColor: bgColor }}>
-      <view className="image-grid" main-thread:ref={scrollContainerRef}>
+    <view className='App' style={{ backgroundColor: bgColor }}>
+      <view className='image-grid' main-thread:ref={scrollContainerRef}>
         {imageSrcs.map((_, index) => (
-          <view key={index} className="image-container">
-            {imageSrcs[index] ? (
-              <image className="skeleton" src={imageSrcs[index]} />
-            ) : (
-              <view className="skeleton"></view>
-            )}
+          <view key={index} className='image-container'>
+            {imageSrcs[index]
+              ? <image className='skeleton' src={imageSrcs[index]} />
+              : <view className='skeleton'></view>}
           </view>
         ))}
       </view>

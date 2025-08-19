@@ -19,11 +19,12 @@ import Image8Heic from '../images/8.heic';
 // @ts-expect-error
 import libheif from 'libheif-js';
 
-
 const imageCount = 8;
 
 const App: React.FC = () => {
-  const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(Array(imageCount).fill(null));
+  const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(
+    Array(imageCount).fill(null),
+  );
   const [bgColor] = useState('#ffffff');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const currentScrollY = useRef(0);
@@ -33,14 +34,14 @@ const App: React.FC = () => {
     if (prevTime.current === 0) {
       prevTime.current = time;
       requestAnimationFrame(animator);
-    }
-    else {
+    } else {
       const deltaTime = time - prevTime.current;
       prevTime.current = time;
       if (scrollContainerRef.current) {
         if (currentScrollY.current > -500) {
           currentScrollY.current -= deltaTime * 0.05;
-          scrollContainerRef.current.style.transform = `translateY(${currentScrollY.current}px)`;
+          scrollContainerRef.current.style.transform =
+            `translateY(${currentScrollY.current}px)`;
           requestAnimationFrame(animator);
         }
       }
@@ -66,11 +67,13 @@ const App: React.FC = () => {
       for (let index = 0; index < imageUrls.length; index++) {
         const url = imageUrls[index];
         const decoder = new libheif.HeifDecoder();
-        const buffer = await fetch(url).then((response) => response.arrayBuffer());
+        const buffer = await fetch(url).then((response) =>
+          response.arrayBuffer()
+        );
         const [image] = decoder.decode(buffer);
         const width = image.get_width();
         const height = image.get_height();
-        const data = new Uint8ClampedArray(width * height * 4,);
+        const data = new Uint8ClampedArray(width * height * 4);
         const { promise, resolve } = Promise.withResolvers();
         image.display({ data, width, height }, async () => {
           const newImage = new ImageData(data, width, height);
@@ -93,19 +96,23 @@ const App: React.FC = () => {
       imageSrcs.forEach((src) => {
         src && URL.revokeObjectURL(src as string);
       });
-    }
+    };
   }, []);
 
   return (
-    <div className="App" style={{ backgroundColor: bgColor }}>
-      <div className="image-grid" ref={scrollContainerRef}>
+    <div className='App' style={{ backgroundColor: bgColor }}>
+      <div className='image-grid' ref={scrollContainerRef}>
         {imageSrcs.map((_, index) => (
-          <div key={index} className="image-container">
-            {imageSrcs[index] ? (
-              <img className="skeleton" src={imageSrcs[index] as string} alt={`heic-image-${index}`} />
-            ) : (
-              <div className="skeleton"></div>
-            )}
+          <div key={index} className='image-container'>
+            {imageSrcs[index]
+              ? (
+                <img
+                  className='skeleton'
+                  src={imageSrcs[index] as string}
+                  alt={`heic-image-${index}`}
+                />
+              )
+              : <div className='skeleton'></div>}
           </div>
         ))}
       </div>
