@@ -35,7 +35,7 @@ const App: React.FC = () => {
   const imageGridRef = useMainThreadRef<MainThread.Element>(null);
   const animationFrameId = useMainThreadRef<number | null>(null);
   const zoomInputRef = useMainThreadRef<MainThread.Element>(null);
-  const scale = useMainThreadRef(1);
+  const scale = useMainThreadRef(1.2);
   const offsetX = useMainThreadRef(0);
   const offsetY = useMainThreadRef(0);
 
@@ -81,6 +81,9 @@ const App: React.FC = () => {
       <view
         main-thread:ref={imageGridRef}
         className='image-grid'
+        style={{
+          transform: `scale(1.2)`
+        }}
       >
         {imageUrls.map((url, index) => (
           <view className='image-container' key={index}>
@@ -107,7 +110,8 @@ const App: React.FC = () => {
       <input
         type="range"
         min="-2000"
-        max="2000"      
+        max="2000" 
+        step="5"     
         main-thread:bindinput={(e) => {
           'main thread';
           const value = e.detail?.value;
@@ -121,7 +125,8 @@ const App: React.FC = () => {
       <input
         type="range"
         min="-2000"
-        max="20500"
+        max="2000"
+        step="5"
         main-thread:bindinput={(e) => {
           'main thread';
           const value = e.detail?.value;

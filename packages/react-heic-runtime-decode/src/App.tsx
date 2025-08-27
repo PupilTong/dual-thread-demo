@@ -34,7 +34,7 @@ const App: React.FC = () => {
   const imageGridRef = useRef<HTMLDivElement>(null);
   const animationFrameId = useRef<number | null>(null);
   const zoomInputRef = useRef<HTMLInputElement>(null);
-  const scale = useRef(1);
+  const scale = useRef(1.2);
   const offsetX = useRef(0);
   const offsetY = useRef(0);
 
@@ -77,6 +77,9 @@ const App: React.FC = () => {
       <div
         ref={imageGridRef}
         className='image-grid'
+        style={{
+          transform: `scale(1.2)`
+        }}
       >
         {imageUrls.map((url, index) => (
           <div className='image-container' key={index}>
@@ -101,6 +104,7 @@ const App: React.FC = () => {
         type="range"
         min="-2000"
         max="2000"
+        step="5"
         defaultValue={offsetX.current}
         onChange={(e) => {
           offsetX.current = parseInt(e.target.value, 10);
@@ -111,7 +115,8 @@ const App: React.FC = () => {
       <input
         type="range"
         min="-2000"
-        max="20500"
+        max="2000"
+        step="5"
         defaultValue={offsetY.current}
         onChange={(e) => {
           offsetY.current = parseInt(e.target.value, 10);
