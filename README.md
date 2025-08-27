@@ -1,5 +1,7 @@
 # A demo for showing why multi-threading web application is important
 
+Github Pages Live Demo: https://pupiltong.github.io/dual-thread-demo/
+
 ## prepare
 
 ```bash

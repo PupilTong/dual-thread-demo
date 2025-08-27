@@ -48,10 +48,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: |
-            docs
-            packages/lynx-heic-runtime-decode/www
-            packages/react-heic-runtime-decode/dist
+          path: './docs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

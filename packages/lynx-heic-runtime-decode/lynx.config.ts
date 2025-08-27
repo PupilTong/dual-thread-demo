@@ -8,6 +8,10 @@ export default defineConfig({
     assetsInclude: [/\.heic$/],
   },
   environments: {
-    web: {},
+    web: {
+      output: {
+        assetPrefix: 'auto'
+      }
+    },
   },
 });

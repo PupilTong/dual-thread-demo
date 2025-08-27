@@ -18,6 +18,6 @@ export default defineConfig({
     distPath: {
       root: '../../docs/react',
     },
-    assetPrefix: './'
+    assetPrefix: 'auto'
   }
 });

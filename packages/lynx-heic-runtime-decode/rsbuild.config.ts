@@ -8,8 +8,10 @@ export default defineConfig({
   },
   output: {
     distPath: {
-      root: './www',
+      root: '../../docs/lynx',
+      js: '.'
     },
+    assetPrefix: 'auto'
   },
   server: {
     publicDir: [{
