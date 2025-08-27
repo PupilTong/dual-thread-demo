@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import './App.css';
 // @ts-expect-error
 import Image1Heic from '../images/1.heic';
@@ -16,106 +16,112 @@ import Image6Heic from '../images/6.heic';
 import Image7Heic from '../images/7.heic';
 // @ts-expect-error
 import Image8Heic from '../images/8.heic';
-// @ts-expect-error
-import libheif from 'libheif-js';
+import { HeicImage } from './HeicImage.jsx';
 
-const imageCount = 8;
+const GRID_SIZE = 5;
 
+const baseImageUrls = [
+  Image1Heic,
+  Image2Heic,
+  Image3Heic,
+  Image4Heic,
+  Image5Heic,
+  Image6Heic,
+  Image7Heic,
+  Image8Heic,
+];
 const App: React.FC = () => {
-  const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(
-    Array(imageCount).fill(null),
-  );
-  const [bgColor] = useState('#ffffff');
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const currentScrollY = useRef(0);
-  const prevTime = useRef(0);
+  const imageGridRef = useRef<HTMLDivElement>(null);
+  const animationFrameId = useRef<number | null>(null);
+  const zoomInputRef = useRef<HTMLInputElement>(null);
+  const scale = useRef(1);
+  const offsetX = useRef(0);
+  const offsetY = useRef(0);
 
-  function animator(time: number) {
-    if (prevTime.current === 0) {
-      prevTime.current = time;
-      requestAnimationFrame(animator);
-    } else {
-      const deltaTime = time - prevTime.current;
-      prevTime.current = time;
-      if (scrollContainerRef.current) {
-        if (currentScrollY.current > -500) {
-          currentScrollY.current -= deltaTime * 0.05;
-          scrollContainerRef.current.style.transform =
-            `translateY(${currentScrollY.current}px)`;
-          requestAnimationFrame(animator);
-        }
-      }
+  const imageUrls = Array.from({ length: GRID_SIZE * GRID_SIZE }).map(
+    (_, i) => baseImageUrls[i % baseImageUrls.length]
+  );
+
+  function updateTransform() {
+    if (imageGridRef.current) {
+      imageGridRef.current.style.transform = `scale(${scale.current}) translate(${offsetX.current}px, ${offsetY.current}px)`;
     }
   }
 
-  useEffect(() => {
-    requestAnimationFrame(animator);
-  }, []);
+  function animate() {
+    scale.current -= 0.001;
+    zoomInputRef.current && (zoomInputRef.current.value = scale.current.toString());
+    updateTransform();
 
-  useEffect(() => {
-    const decodeImages = async () => {
-      const imageUrls = [
-        Image1Heic,
-        Image2Heic,
-        Image3Heic,
-        Image4Heic,
-        Image5Heic,
-        Image6Heic,
-        Image7Heic,
-        Image8Heic,
-      ];
-      for (let index = 0; index < imageUrls.length; index++) {
-        const url = imageUrls[index];
-        const decoder = new libheif.HeifDecoder();
-        const buffer = await fetch(url).then((response) =>
-          response.arrayBuffer()
-        );
-        const [image] = decoder.decode(buffer);
-        const width = image.get_width();
-        const height = image.get_height();
-        const data = new Uint8ClampedArray(width * height * 4);
-        const { promise, resolve } = Promise.withResolvers();
-        image.display({ data, width, height }, async () => {
-          const newImage = new ImageData(data, width, height);
-          const offscreenCanvas = new OffscreenCanvas(width, height);
-          const ctx = offscreenCanvas.getContext('2d');
-          ctx?.putImageData(newImage, 0, 0);
-          const blob = await offscreenCanvas.convertToBlob();
-          const imageUrl = URL.createObjectURL(blob);
-          image.free();
-          imageSrcs[index] = imageUrl;
-          setImageSrcs([...imageSrcs]);
-          resolve(null);
-        });
-        await promise;
-      }
-    };
+    if (scale.current > 0.15) {
+      animationFrameId.current = requestAnimationFrame(animate);
+    } else {
+      scale.current = 0.15;
+      updateTransform();
+    }
+  }
 
-    decodeImages();
-    return () => {
-      imageSrcs.forEach((src) => {
-        src && URL.revokeObjectURL(src as string);
-      });
-    };
-  }, []);
+  function handleAnimateClick() {
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+    }
+    scale.current = 1;
+    offsetX.current = 0;
+    offsetY.current = 0;
+    updateTransform();
+    animationFrameId.current = requestAnimationFrame(animate);
+  }
 
   return (
-    <div className='App' style={{ backgroundColor: bgColor }}>
-      <div className='image-grid' ref={scrollContainerRef}>
-        {imageSrcs.map((_, index) => (
-          <div key={index} className='image-container'>
-            {imageSrcs[index]
-              ? (
-                <img
-                  className='skeleton'
-                  src={imageSrcs[index] as string}
-                  alt={`heic-image-${index}`}
-                />
-              )
-              : <div className='skeleton'></div>}
+    <div className='App'>
+      <div
+        ref={imageGridRef}
+        className='image-grid'
+      >
+        {imageUrls.map((url, index) => (
+          <div className='image-container' key={index}>
+            <HeicImage src={url} />
           </div>
         ))}
       </div>
+      <input
+        type="range"
+        min="0.1"
+        max="2"
+        step="0.01"
+        defaultValue={scale.current}
+        onChange={(e) => {
+          scale.current = parseFloat(e.target.value);
+          updateTransform();
+        }}
+        className="slider horizontal"
+        ref={zoomInputRef}
+      />
+      <input
+        type="range"
+        min="-2000"
+        max="2000"
+        defaultValue={offsetX.current}
+        onChange={(e) => {
+          offsetX.current = parseInt(e.target.value, 10);
+          updateTransform();
+        }}
+        className="slider horizontal"
+      />
+      <input
+        type="range"
+        min="-2000"
+        max="20500"
+        defaultValue={offsetY.current}
+        onChange={(e) => {
+          offsetY.current = parseInt(e.target.value, 10);
+          updateTransform();
+        }}
+        className="slider vertical"
+      />
+      <button onClick={handleAnimateClick} className="animate-button">
+        Animate
+      </button>
     </div>
   );
 };

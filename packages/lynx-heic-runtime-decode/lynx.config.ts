@@ -7,9 +7,6 @@ export default defineConfig({
     entry: './src/index.tsx',
     assetsInclude: [/\.heic$/],
   },
-  output: {
-    assetPrefix: 'http://localhost:3000/',
-  },
   environments: {
     web: {},
   },

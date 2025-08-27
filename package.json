@@ -1,6 +1,9 @@
 {
   "name": "dual-thread-demo",
   "private": true,
+  "scripts": {
+    "build":"pnpm -r run build"
+  },
   "dependencies": {
     "@rsbuild/core": "^1.4.15"
   },
