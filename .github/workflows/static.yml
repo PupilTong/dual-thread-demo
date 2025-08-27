@@ -42,16 +42,21 @@ jobs:
       - name: Build
         run: |
           pnpm build
+      - name: Prepare artifact
+        run: |
+          mkdir -p ./_site
+          cp index.html ./_site/
+          mkdir -p ./_site/packages/lynx-heic-runtime-decode/www
+          cp -r packages/lynx-heic-runtime-decode/www/* ./_site/packages/lynx-heic-runtime-decode/www/
+          mkdir -p ./_site/packages/react-heic-runtime-decode/dist
+          cp -r packages/react-heic-runtime-decode/dist/* ./_site/packages/react-heic-runtime-decode/dist/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: |
-            docs
-            packages/lynx-heic-runtime-decode/www
-            packages/react-heic-runtime-decode/dist
+          path: './_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
