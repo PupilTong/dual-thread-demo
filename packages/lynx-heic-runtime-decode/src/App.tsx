@@ -1,9 +1,4 @@
-import {
-  useMainThreadRef,
-  useState,
-  useEffect,
-  runOnMainThread,
-} from '@lynx-js/react';
+import { useState, useCallback, useMainThreadRef } from '@lynx-js/react';
 import type { MainThread } from '@lynx-js/types';
 import './App.css';
 // @ts-expect-error
@@ -22,101 +17,125 @@ import Image6Heic from '../images/6.heic';
 import Image7Heic from '../images/7.heic';
 // @ts-expect-error
 import Image8Heic from '../images/8.heic';
-// @ts-expect-error
-import libheif from 'libheif-js';
-import type { JSX } from 'react';
+import { HeicImage } from './HeicImage.jsx';
 
-const imageCount = 8;
+const GRID_SIZE = 5;
 
-const App = (): JSX.Element => {
-  const [imageSrcs, setImageSrcs] = useState<(string | null)[]>(
-    Array(imageCount).fill(null),
+const baseImageUrls = [
+  Image1Heic,
+  Image2Heic,
+  Image3Heic,
+  Image4Heic,
+  Image5Heic,
+  Image6Heic,
+  Image7Heic,
+  Image8Heic,
+];
+const App: React.FC = () => {
+  const imageGridRef = useMainThreadRef<MainThread.Element>(null);
+  const animationFrameId = useMainThreadRef<number | null>(null);
+  const zoomInputRef = useMainThreadRef<MainThread.Element>(null);
+  const scale = useMainThreadRef(1);
+  const offsetX = useMainThreadRef(0);
+  const offsetY = useMainThreadRef(0);
+
+  const imageUrls = Array.from({ length: GRID_SIZE * GRID_SIZE }).map(
+    (_, i) => baseImageUrls[i % baseImageUrls.length]
   );
-  const [bgColor] = useState('#ffffff');
-  const scrollContainerRef = useMainThreadRef<MainThread.Element>(null);
-  const currentScrollY = useMainThreadRef(0);
-  const prevTime = useMainThreadRef(0);
-  function animator(time: number) {
+
+  function updateTransform() {
     'main thread';
-    if (prevTime.current === 0) {
-      prevTime.current = time;
-      requestAnimationFrame(animator);
-    } else {
-      const deltaTime = time - prevTime.current;
-      prevTime.current = time;
-      if (scrollContainerRef.current) {
-        if (currentScrollY.current > -500) {
-          currentScrollY.current -= deltaTime * 0.05;
-          scrollContainerRef.current.setStyleProperties({
-            transform: `translateY(${currentScrollY.current}px)`,
-          });
-          requestAnimationFrame(animator);
-        }
-      }
+    if (imageGridRef.current) {
+      imageGridRef.current.setStyleProperty('transform', `scale(${scale.current}) translate(${offsetX.current}px, ${offsetY.current}px)`);
     }
   }
 
-  useEffect(() => {
-    runOnMainThread(animator)(0);
-  }, []);
+  function animate() {
+    'main thread';
+    scale.current -= 0.001;
+    updateTransform();
+    zoomInputRef.current && zoomInputRef.current.setAttribute('value', scale.current.toString());
 
-  useEffect(() => {
-    const decodeImages = async () => {
-      const imageUrls = [
-        Image1Heic,
-        Image2Heic,
-        Image3Heic,
-        Image4Heic,
-        Image5Heic,
-        Image6Heic,
-        Image7Heic,
-        Image8Heic,
-      ];
-      for (let index = 0; index < imageUrls.length; index++) {
-        const url = imageUrls[index];
-        const decoder = new libheif.HeifDecoder();
-        const buffer = await fetch(url).then((response) =>
-          response.arrayBuffer()
-        );
-        const [image] = decoder.decode(buffer);
-        const width = image.get_width();
-        const height = image.get_height();
-        const data = new Uint8ClampedArray(width * height * 4);
-        const { promise, resolve } = Promise.withResolvers();
-        image.display({ data, width, height }, async () => {
-          const newImage = new ImageData(data, width, height);
-          const offscreenCanvas = new OffscreenCanvas(width, height);
-          const ctx = offscreenCanvas.getContext('2d');
-          ctx?.putImageData(newImage, 0, 0);
-          const blob = await offscreenCanvas.convertToBlob();
-          const imageUrl = URL.createObjectURL(blob);
-          image.free();
-          imageSrcs[index] = imageUrl;
-          setImageSrcs([...imageSrcs]);
-          resolve(null);
-        });
-        await promise;
-      }
-    };
+    if (scale.current > 0.15) {
+      animationFrameId.current = requestAnimationFrame(animate);
+    } else {
+      scale.current = 0.15;
+      updateTransform();
+    }
+  }
 
-    decodeImages();
-    return () => {
-      imageSrcs.forEach((src) => {
-        src && URL.revokeObjectURL(src as string);
-      });
-    };
-  }, []);
+  function handleAnimateClick() {
+    'main thread';
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+    }
+    scale.current = 1;
+    offsetX.current = 0;
+    offsetY.current = 0;
+    updateTransform();
+    animationFrameId.current = requestAnimationFrame(animate);
+  }
 
   return (
-    <view className='App' style={{ backgroundColor: bgColor }}>
-      <view className='image-grid' main-thread:ref={scrollContainerRef}>
-        {imageSrcs.map((_, index) => (
-          <view key={index} className='image-container'>
-            {imageSrcs[index]
-              ? <image className='skeleton' src={imageSrcs[index]} />
-              : <view className='skeleton'></view>}
+    <view className='App'>
+      <view
+        main-thread:ref={imageGridRef}
+        className='image-grid'
+      >
+        {imageUrls.map((url, index) => (
+          <view className='image-container' key={index}>
+            <HeicImage src={url} />
           </view>
         ))}
+      </view>
+      <input
+        type="range"
+        min="0.1"
+        max="2"
+        step="0.01"
+        main-thread:ref={zoomInputRef}
+        main-thread:bindinput={(e) => {
+          'main thread';
+          const value = e.detail?.value;
+          if (value) {
+            scale.current = value;
+            updateTransform();
+          }
+        }}
+        className="slider horizontal"
+      />
+      <input
+        type="range"
+        min="-2000"
+        max="2000"      
+        main-thread:bindinput={(e) => {
+          'main thread';
+          const value = e.detail?.value;
+          if (value) {
+            offsetX.current = parseInt(value, 10);
+            updateTransform();
+          }
+        }}
+        className="slider horizontal"
+      />
+      <input
+        type="range"
+        min="-2000"
+        max="20500"
+        main-thread:bindinput={(e) => {
+          'main thread';
+          const value = e.detail?.value;
+          if (value) {
+            offsetY.current = parseInt(value, 10);
+            updateTransform();
+          }
+        }}
+        className="slider vertical"
+      />
+      <view main-thread:bindtap={handleAnimateClick} className="animate-button" style={{justifyContent:'center'}}>
+        <text >
+          Animate
+        </text>
       </view>
     </view>
   );

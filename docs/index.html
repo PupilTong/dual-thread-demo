@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dual Thread Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .link {
+      display: block;
+      background-color: #007bff;
+      color: white;
+      padding: 15px 30px;
+      margin: 15px 0;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+    .link:hover {
+      background-color: #0056b3;
+    }
+    .link-secondary {
+        background-color: #6c757d;
+    }
+    .link-secondary:hover {
+        background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dual Thread Demo</h1>
+    <a href="../packages/react-heic-runtime-decode/dist/main.html" class="link">React HEIC Runtime Decode</a>
+    <a href="../packages/lynx-heic-runtime-decode/www/main.html" class="link link-secondary">Lynx HEIC Runtime Decode</a>
+  </div>
+</body>
+</html>

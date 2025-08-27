@@ -14,4 +14,10 @@ export default defineConfig({
   server: {
     port: 3001,
   },
+  output: {
+    distPath: {
+      root: '../../docs/react',
+    },
+    assetPrefix: './'
+  }
 });
