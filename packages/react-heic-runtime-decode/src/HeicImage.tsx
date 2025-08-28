@@ -1,26 +1,17 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 // @ts-expect-error
 import libheif from 'libheif-js';
 import type { JSX } from 'react';
-import { useInView } from 'react-intersection-observer';
 
 interface HeicImageProps {
   src: string | null;
+  onClick?: () => void;
 }
 
 export const HeicImage = ({
-  src: srcProps,
+  src,
 }: HeicImageProps): JSX.Element => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const { ref, inView } = useInView({
-    triggerOnce: false,
-  });
-  const src = useMemo(() => {
-    if (inView) {
-      return srcProps;
-    }
-    return null;
-  }, [inView, srcProps]);
 
   useEffect(() => {
     if (src) {
@@ -63,9 +54,5 @@ export const HeicImage = ({
       setImageSrc(null);
     }
   }, [src]);
-  return <div ref={ref} className='image-container'>
-    {
-      imageSrc ? <img className={'skeleton'} src={imageSrc} /> : <div className={'skeleton'}></div>
-    }
-  </div>;
+  return imageSrc ? <img className={'skeleton'} src={imageSrc} /> : <div className={'skeleton'}></div>;
 };

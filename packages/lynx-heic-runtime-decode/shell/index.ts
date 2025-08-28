@@ -7,6 +7,7 @@ import '@lynx-js/web-elements/index.css';
 import type { LynxView } from '@lynx-js/web-core';
 // @ts-expect-error
 import * as lynxSrc from '../dist/main.web.bundle' with { type: 'json' };
+document.body.style.margin = '0';
 
 const lynxView = document.createElement('lynx-view') as LynxView;
 lynxView.customTemplateLoader = (name) => {
