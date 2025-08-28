@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 // @ts-expect-error
 import Image1Heic from '../images/1.heic';
@@ -18,8 +18,8 @@ import Image7Heic from '../images/7.heic';
 import Image8Heic from '../images/8.heic';
 import { HeicImage } from './HeicImage.jsx';
 
-const GRID_SIZE = 5;
-
+const GRID_SIZE = 4;
+const offsetStep = 1 / 12;
 const baseImageUrls = [
   Image1Heic,
   Image2Heic,
@@ -30,102 +30,45 @@ const baseImageUrls = [
   Image7Heic,
   Image8Heic,
 ];
+const animationDelayMatrix = [
+  [0, 1, 2, 3,],
+  [11, 0, 0, 4,],
+  [10, 0, 0, 5],
+  [9, 8, 7, 6]
+];
+
+const imageUrls = Array.from({ length: GRID_SIZE * GRID_SIZE }).map(
+  (_, i) => baseImageUrls[i % baseImageUrls.length]
+);
 const App: React.FC = () => {
-  const imageGridRef = useRef<HTMLDivElement>(null);
-  const animationFrameId = useRef<number | null>(null);
-  const zoomInputRef = useRef<HTMLInputElement>(null);
-  const scale = useRef(1.2);
-  const offsetX = useRef(0);
-  const offsetY = useRef(0);
-
-  const imageUrls = Array.from({ length: GRID_SIZE * GRID_SIZE }).map(
-    (_, i) => baseImageUrls[i % baseImageUrls.length]
-  );
-
-  function updateTransform() {
-    if (imageGridRef.current) {
-      imageGridRef.current.style.transform = `scale(${scale.current}) translate(${offsetX.current}px, ${offsetY.current}px)`;
-    }
-  }
-
-  function animate() {
-    scale.current -= 0.001;
-    zoomInputRef.current && (zoomInputRef.current.value = scale.current.toString());
-    updateTransform();
-
-    if (scale.current > 0.15) {
-      animationFrameId.current = requestAnimationFrame(animate);
-    } else {
-      scale.current = 0.15;
-      updateTransform();
-    }
-  }
-
+  const [images, setImages] = useState(new Array(GRID_SIZE * GRID_SIZE).fill(null));
   function handleAnimateClick() {
-    if (animationFrameId.current) {
-      cancelAnimationFrame(animationFrameId.current);
-    }
-    scale.current = 1;
-    offsetX.current = 0;
-    offsetY.current = 0;
-    updateTransform();
-    animationFrameId.current = requestAnimationFrame(animate);
+    setImages(new Array(GRID_SIZE * GRID_SIZE).fill(null));
+    setTimeout(() => {
+      setImages(imageUrls);
+    }, 100);
   }
 
   return (
     <div className='App'>
       <div
-        ref={imageGridRef}
         className='image-grid'
-        style={{
-          transform: `scale(1.2)`
-        }}
       >
-        {imageUrls.map((url, index) => (
-          <div className='image-container' key={index}>
-            <HeicImage src={url} />
-          </div>
-        ))}
+        {images.map((url, index) => {
+          const row = Math.floor(index / GRID_SIZE);
+          const col = index % GRID_SIZE;
+          const isEdge = row === 0 || row === GRID_SIZE - 1 || col === 0 || col === GRID_SIZE - 1;
+          const delay = animationDelayMatrix[row]![col]! * offsetStep;
+          return isEdge ?
+            <div className='image-container' key={index} style={{ animation: isEdge ? undefined : 'none', animationDelay: `${isEdge ? delay : 0}s` }}>
+              <HeicImage src={isEdge ? url : undefined}/>
+            </div>
+            :
+            <div className='image-container' style={{animation: 'none'}}></div>
+        })}
       </div>
-      <input
-        type="range"
-        min="0.1"
-        max="2"
-        step="0.01"
-        defaultValue={scale.current}
-        onChange={(e) => {
-          scale.current = parseFloat(e.target.value);
-          updateTransform();
-        }}
-        className="slider horizontal"
-        ref={zoomInputRef}
-      />
-      <input
-        type="range"
-        min="-2000"
-        max="2000"
-        step="5"
-        defaultValue={offsetX.current}
-        onChange={(e) => {
-          offsetX.current = parseInt(e.target.value, 10);
-          updateTransform();
-        }}
-        className="slider horizontal"
-      />
-      <input
-        type="range"
-        min="-2000"
-        max="2000"
-        step="5"
-        defaultValue={offsetY.current}
-        onChange={(e) => {
-          offsetY.current = parseInt(e.target.value, 10);
-          updateTransform();
-        }}
-        className="slider vertical"
-      />
       <button onClick={handleAnimateClick} className="animate-button">
-        Animate
+        Restart
       </button>
     </div>
   );

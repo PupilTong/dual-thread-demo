@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from '@lynx-js/react';
+import { useState, useEffect } from '@lynx-js/react';
 // @ts-expect-error
 import libheif from 'libheif-js';
 
@@ -7,16 +7,9 @@ interface HeicImageProps {
 }
 
 export const HeicImage = ({
-  src: srcProps,
+  src,
 }: HeicImageProps): JSX.Element => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [inView, setInView] = useState(false);
-  const src = useMemo(() => {
-    if (inView) {
-      return srcProps;
-    }
-    return null;
-  }, [inView, srcProps]);
 
   useEffect(() => {
     //@ts-expect-error
@@ -63,9 +56,6 @@ export const HeicImage = ({
       setImageSrc(null);
     }
   }, [src]);
-  return <view binduiappear={() => {setInView(true)}} binduidisappear={() => {setInView(false)}} className='image-container'>
-    {
-      imageSrc ? <image className={'skeleton'} src={imageSrc} /> : <view className={'skeleton'} />
-    }
-  </view>;
+  return imageSrc ? <image className={'skeleton'} src={imageSrc} /> : <view className={'skeleton'} />
+
 };

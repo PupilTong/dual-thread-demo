@@ -7,12 +7,13 @@ import '@lynx-js/web-elements/index.css';
 import type { LynxView } from '@lynx-js/web-core';
 // @ts-expect-error
 import * as lynxSrc from '../dist/main.web.bundle' with { type: 'json' };
+document.body.style.margin = '0';
 
 const lynxView = document.createElement('lynx-view') as LynxView;
 lynxView.customTemplateLoader = (name) => {
   return lynxSrc;
 };
-lynxView.setAttribute('style', 'width: 100vw; height: 100vh;');
+lynxView.setAttribute('style', 'width: 90vw; height: 90vh;');
 lynxView.url = 'lynx://main.web.bundle';
 lynxView.setAttribute('id', 'root');
 document.body.appendChild(lynxView);
