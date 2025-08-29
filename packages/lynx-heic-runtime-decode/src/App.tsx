@@ -18,8 +18,8 @@ import Image7Heic from '../images/7.heic';
 import Image8Heic from '../images/8.heic';
 import { HeicImage } from './HeicImage.jsx';
 
-const GRID_SIZE = 4;
-const offsetStep = 1 / 12;
+const GRID_SIZE = 5;
+const offsetStep = 1 / 16;
 const baseImageUrls = [
   Image1Heic,
   Image2Heic,
@@ -31,12 +31,12 @@ const baseImageUrls = [
   Image8Heic,
 ];
 const animationDelayMatrix = [
-  [0, 1, 2, 3,],
-  [11, 0, 0, 4,],
-  [10, 0, 0, 5],
-  [9, 8, 7, 6]
+  [0, 1, 2, 3, 4],
+  [15, 0, 0, 0, 5],
+  [14, 0, 0, 0, 6],
+  [13, 0, 0, 0, 7],
+  [12, 11, 10, 9, 8]
 ];
-
 const imageUrls = Array.from({ length: GRID_SIZE * GRID_SIZE }).map(
   (_, i) => baseImageUrls[i % baseImageUrls.length]
 );
