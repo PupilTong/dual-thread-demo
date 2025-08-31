@@ -9,9 +9,9 @@ export default defineConfig({
   output: {
     distPath: {
       root: '../../docs/lynx',
-      js: '.'
+      js: '.',
     },
-    assetPrefix: 'auto'
+    assetPrefix: 'auto',
   },
   server: {
     publicDir: [{

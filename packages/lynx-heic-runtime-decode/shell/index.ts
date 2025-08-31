@@ -18,19 +18,18 @@ lynxView.url = 'lynx://main.web.bundle';
 lynxView.setAttribute('id', 'root');
 document.body.appendChild(lynxView);
 requestAnimationFrame(() => {
-  
   lynxView.shadowRoot!.addEventListener('input', (e) => {
     const target = e.target as HTMLElement;
     /**
      * We add detail to the event to make lynx event system happy.
      * Typically this should be a custom element internal logic.
      */
-    //@ts-expect-error
-    if (target.matches('input[type="range"]') && !e.detail ) {
-    //@ts-expect-error
+    // @ts-expect-error
+    if (target.matches('input[type="range"]') && !e.detail) {
+      // @ts-expect-error
       e.detail = {
-        value: (e .target as HTMLInputElement)?.value,
-      }
+        value: (e.target as HTMLInputElement)?.value,
+      };
     }
-  }, {capture: true, passive: false, });
+  }, { capture: true, passive: false });
 });

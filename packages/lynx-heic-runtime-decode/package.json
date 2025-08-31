@@ -4,17 +4,17 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build":"rspeedy build && rsbuild build",
+    "build": "rspeedy build && rsbuild build",
     "preview": "npm run build && rsbuild preview"
   },
   "dependencies": {
     "@rsbuild/plugin-node-polyfill": "^1.4.1",
-    "libheif-js": "^1.19.8",
+    "heic-image": "workspace:*",
+    "lottie-grid": "workspace:*",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@lynx-js/lynx-core": "^0.1.3",
-    "@lynx-js/react": "^0.112.2",
     "@lynx-js/react-rsbuild-plugin": "^0.10.11",
     "@lynx-js/rspeedy": "^0.10.6",
     "@lynx-js/types": "^3.3.0",

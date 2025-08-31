@@ -1,0 +1,10 @@
+{
+  "name": "heic-image",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "dependencies": {
+    "libheif-js": "^1.19.8"
+  }
+}

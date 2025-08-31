@@ -4,14 +4,14 @@ import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin';
 export default defineConfig({
   plugins: [pluginReactLynx(), pluginNodePolyfill()],
   source: {
-    entry: './src/index.tsx',
+    entry: './src/index.jsx',
     assetsInclude: [/\.heic$/],
   },
   environments: {
     web: {
       output: {
-        assetPrefix: 'auto'
-      }
+        assetPrefix: 'auto',
+      },
     },
   },
 });

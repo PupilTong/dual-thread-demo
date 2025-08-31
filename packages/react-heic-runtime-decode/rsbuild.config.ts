@@ -8,7 +8,7 @@ export default defineConfig({
   source: {
     assetsInclude: [/\.heic$/],
     entry: {
-      main: './src/index.tsx',
+      main: './src/index.jsx',
     },
   },
   server: {
@@ -18,6 +18,6 @@ export default defineConfig({
     distPath: {
       root: '../../docs/react',
     },
-    assetPrefix: 'auto'
-  }
+    assetPrefix: 'auto',
+  },
 });
