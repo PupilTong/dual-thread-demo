@@ -10,7 +10,7 @@ export const Button = ({ onClick, children }) => {
         alignItems: 'center',
       }}
     >
-      <p>
+      <p style={{ color: 'white', fontFamily: 'system-ui' }}>
         {children}
       </p>
     </div>

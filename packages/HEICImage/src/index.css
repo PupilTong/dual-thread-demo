@@ -1,6 +1,5 @@
 .image {
   object-fit: cover;
-  background-color: rgba(0, 0, 0, 0.85);
   height: 100%;
   width: 100%;
   contain: strict;
@@ -9,6 +8,6 @@
 .skeleton {
   height: 100%;
   width: 100%;
-  background-color: #e0e0e0;
+  background-color: #7e85905b;
   display: flex;
 }

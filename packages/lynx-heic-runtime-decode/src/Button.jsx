@@ -10,7 +10,7 @@ export const Button = ({ onClick, children }) => {
         alignItems: 'center',
       }}
     >
-      <text>
+      <text style={{ color: 'white', fontFamily: 'system-ui' }}>
         {children}
       </text>
     </view>

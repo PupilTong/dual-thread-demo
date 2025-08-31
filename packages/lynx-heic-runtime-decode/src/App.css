@@ -3,7 +3,8 @@
   overflow: clip;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
+  gap: 40px;
   flex-direction: column;
   padding: 10px;
   height: 100%;
@@ -12,14 +13,14 @@
 
 .animate-button {
   height: 40px;
-  width: 80%;
-  background-color: #007bff;
+  width: 90%;
+  background-color: #ff351A;
   border: none;
   border-radius: 5px;
 }
 
 .animate-button:hover {
-  background-color: #0056b3;
+  background-color: #fa5b46;
 }
 
 body {

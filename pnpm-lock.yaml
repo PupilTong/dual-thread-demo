@@ -28,6 +28,8 @@ importers:
         specifier: ^19.1.1
         version: 19.1.1
 
+  packages/FPS-meter: {}
+
   packages/HEICImage:
     dependencies:
       libheif-js:
@@ -45,6 +47,9 @@ importers:
       '@rsbuild/plugin-node-polyfill':
         specifier: ^1.4.1
         version: 1.4.1(@rsbuild/core@1.4.15)
+      fps-meter:
+        specifier: workspace:*
+        version: link:../FPS-meter
       heic-image:
         specifier: workspace:*
         version: link:../HEICImage
@@ -85,6 +90,9 @@ importers:
       '@rsbuild/plugin-node-polyfill':
         specifier: ^1.4.1
         version: 1.4.1(@rsbuild/core@1.4.15)
+      fps-meter:
+        specifier: workspace:*
+        version: link:../FPS-meter
       heic-image:
         specifier: workspace:*
         version: link:../HEICImage

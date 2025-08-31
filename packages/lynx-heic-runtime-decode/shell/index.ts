@@ -4,10 +4,14 @@ import '@lynx-js/web-elements/XView';
 import '@lynx-js/web-elements/XText';
 import '@lynx-js/web-core/index.css';
 import '@lynx-js/web-elements/index.css';
+import "fps-meter";
 import type { LynxView } from '@lynx-js/web-core';
 // @ts-expect-error
 import * as lynxSrc from '../dist/main.web.bundle' with { type: 'json' };
 document.body.style.margin = '0';
+document.body.style.backgroundColor = '#191d24';
+document.body.style.display = 'flex';
+document.body.style.justifyContent = 'center';
 
 const lynxView = document.createElement('lynx-view') as LynxView;
 lynxView.customTemplateLoader = (name) => {

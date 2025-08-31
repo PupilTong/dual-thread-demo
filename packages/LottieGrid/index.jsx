@@ -41,8 +41,7 @@ export function createLottieGrid(Container) {
             : (
               <Container
                 key={index}
-                className='lottie-item-container'
-                style={{ animation: 'none' }}
+                style={{ animation: 'none'}}
               >
               </Container>
             );

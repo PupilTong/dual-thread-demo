@@ -12,7 +12,8 @@
     "@rsbuild/plugin-node-polyfill": "^1.4.1",
     "heic-image": "workspace:*",
     "lottie-grid": "workspace:*",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "fps-meter": "workspace:*"
   },
   "devDependencies": {
     "@rsbuild/plugin-react": "^1.3.5",

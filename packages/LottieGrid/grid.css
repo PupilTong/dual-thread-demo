@@ -4,13 +4,13 @@
   width: 100%;
   overflow: clip;
   aspect-ratio: 1;
-  max-height: 80vh;
-  max-width: 80vh;
+  max-height: 70vh;
+  max-width: 70vh;
 }
 
 .lottie-item-container {
   border: 5px solid transparent;
-  border-color: white;
+  border-color: transparent;
   animation: lottie-border-light 1s infinite ease-in;
   display: flex;
   margin: 5px;
@@ -26,7 +26,7 @@
 }
 @keyframes lottie-border-light {
   0% {
-    border-color: white;
+    border-color: transparent;
   }
   25% {
     border-color: #c96ed1;
