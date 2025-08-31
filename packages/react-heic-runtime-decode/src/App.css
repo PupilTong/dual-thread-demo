@@ -26,3 +26,7 @@
 body {
   margin: 0;
 }
+
+img {
+  contain: strict;
+}

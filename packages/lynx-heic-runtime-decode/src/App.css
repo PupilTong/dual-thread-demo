@@ -23,6 +23,6 @@
   background-color: #fa5b46;
 }
 
-body {
-  margin: 0;
+:root{
+  background-color: #191d24;
 }
